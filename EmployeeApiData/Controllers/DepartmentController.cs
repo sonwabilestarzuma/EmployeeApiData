@@ -77,13 +77,15 @@ namespace EmployeeApiData.Controllers
             return new JsonResult("Added Successfully");
         }
 
-
         [HttpPut]
         public JsonResult Put(Department dep)
         {
-            string query = @"update dbo.Department
-                            set DepartmentName = @DepartmentName
-                            where DepartmentId = @DepartmentId";
+            string query = @"
+                        update dbo.Department set 
+                        DepartmentName =@DepartmentName
+                        where DepartmentId=@DepartmentId;
+                        
+            ";
 
             DataTable table = new DataTable();
             string sqlDataSource = _config.GetConnectionString("EmployeeAppApiData");
@@ -91,26 +93,30 @@ namespace EmployeeApiData.Controllers
             using (SqlConnection myConn = new SqlConnection(sqlDataSource))
             {
                 myConn.Open();
-                using (SqlCommand myComand = new SqlCommand(query, myConn))
+                using (SqlCommand myCommand = new SqlCommand(query, myConn))
                 {
-                    myComand.Parameters.AddWithValue("@DepertmentId", dep.DepartmentId);
-                    myComand.Parameters.AddWithValue("@DepertmentName", dep.DepartmentName);
-                    myReader = myComand.ExecuteReader();
+                    myCommand.Parameters.AddWithValue("@DepartmentId", dep.DepartmentId);
+                    myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
+
+                    myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
+
                     myReader.Close();
                     myConn.Close();
                 }
-
             }
-            return new JsonResult(table);
 
+            return new JsonResult("Updated Successfully");
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public JsonResult Delete(int id)
         {
-            string query = @"delete from dbo.Department
-                            where DepartmentId = @DepartmentId";
+            string query = @"
+                        delete from dbo.Department 
+                        where DepartmentId=@DepartmentId;
+                        
+            ";
 
             DataTable table = new DataTable();
             string sqlDataSource = _config.GetConnectionString("EmployeeAppApiData");
@@ -118,20 +124,20 @@ namespace EmployeeApiData.Controllers
             using (SqlConnection myConn = new SqlConnection(sqlDataSource))
             {
                 myConn.Open();
-                using (SqlCommand myComand = new SqlCommand(query, myConn))
+                using (SqlCommand myCommand = new SqlCommand(query, myConn))
                 {
-                    myComand.Parameters.AddWithValue("@DepertmentId", id);
+                    myCommand.Parameters.AddWithValue("@DepartmentId", id);
 
-                    myReader = myComand.ExecuteReader();
+                    myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
+
                     myReader.Close();
                     myConn.Close();
                 }
-
             }
-            return new JsonResult(table);
 
-
+            return new JsonResult("Deleted Successfully");
         }
+
     }
 }
