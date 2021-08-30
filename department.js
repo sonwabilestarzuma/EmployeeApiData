@@ -40,7 +40,6 @@ const department = {template:`
 
 </table>  
 
-
 `,
 data(){
     return{
